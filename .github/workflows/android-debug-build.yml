@@ -16,10 +16,11 @@ jobs:
         with:
           fetch-depth: 0
 
+      # Downgraded to Java 11 to prevent the D8 compiler from crashing
       - uses: actions/setup-java@v3
         with:
-          distribution: 'adopt'
-          java-version: "17"
+          distribution: 'temurin'
+          java-version: "11"
           cache: 'gradle'
 
       - uses: subosito/flutter-action@v2
@@ -34,7 +35,6 @@ jobs:
       - name: Pub Get Packages
         run: flutter pub get
     
-      # Changed to --debug to bypass the need for a release keystore
       - name: Build Debug APK
         run: flutter build apk --debug --flavor dev
 
