@@ -4,7 +4,6 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        // This overrides the buggy D8 compiler
         classpath("com.android.tools:r8:8.3.37")
     }
 }
@@ -14,6 +13,18 @@ allprojects {
         google()
         mavenCentral()
         maven { url "${project(':background_fetch').projectDir}/libs" }
+    }
+
+    // Add this configuration block to force D8-compatible versions
+    configurations.all {
+        resolutionStrategy {
+            force 'com.google.errorprone:error_prone_annotations:2.20.0'
+            force 'androidx.lifecycle:lifecycle-livedata-core:2.8.3'
+            force 'androidx.lifecycle:lifecycle-common:2.8.3'
+            force 'androidx.lifecycle:lifecycle-common-java8:2.8.3'
+            force 'androidx.lifecycle:lifecycle-runtime:2.8.3'
+            force 'androidx.lifecycle:lifecycle-viewmodel:2.8.3'
+        }
     }
 }
 
