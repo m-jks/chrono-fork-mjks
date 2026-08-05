@@ -1,123 +1,48 @@
-import com.android.build.OutputFile
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+        maven { url "${project(':background_fetch').projectDir}/libs" }
+    }
 
-plugins {
-    id "com.android.application"
-    id "kotlin-android"
-    id "dev.flutter.flutter-gradle-plugin"
-}
-
-
-def localProperties = new Properties()
-def localPropertiesFile = rootProject.file('local.properties')
-if (localPropertiesFile.exists()) {
-    localPropertiesFile.withReader('UTF-8') { reader ->
-        localProperties.load(reader)
+    configurations.all {
+        resolutionStrategy {
+            // Fixes the tsbackgroundfetch D8 crash
+            force 'com.google.errorprone:error_prone_annotations:2.20.0'
+            
+            // Fixes the lifecycle-livedata D8 crash
+            force 'androidx.lifecycle:lifecycle-livedata-core:2.6.2'
+            force 'androidx.lifecycle:lifecycle-common:2.6.2'
+            force 'androidx.lifecycle:lifecycle-common-java8:2.6.2'
+            force 'androidx.lifecycle:lifecycle-runtime:2.6.2'
+            force 'androidx.lifecycle:lifecycle-viewmodel:2.6.2'
+            force 'androidx.core:core:1.10.1'
+            force 'androidx.core:core-ktx:1.10.1'
+        }
     }
 }
 
-def flutterVersionCode = localProperties.getProperty('flutter.versionCode')
-if (flutterVersionCode == null) {
-    flutterVersionCode = '1'
+rootProject.buildDir = '../build'
+subprojects {
+    project.buildDir = "${rootProject.buildDir}/${project.name}"
 }
-
-def flutterVersionName = localProperties.getProperty('flutter.versionName')
-if (flutterVersionName == null) {
-    flutterVersionName = '1.0'
-}
-
-def keystoreProperties = new Properties()
-def keystorePropertiesFile = rootProject.file('key.properties')
-if (keystorePropertiesFile.exists()) {
-    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
-}
-
-android {
-    namespace "com.vicolo.chrono"
-
-    compileSdkVersion 34
-    ndkVersion flutter.ndkVersion
+subprojects {
+    project.evaluationDependsOn(':app')
     
-
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
-
-    kotlinOptions {
-        jvmTarget = '1.8'
-    }
-
-    sourceSets {
-        main.java.srcDirs += 'src/main/kotlin'
-    }
-
-    defaultConfig {
-        applicationId "com.vicolo.chrono"
-        minSdkVersion 21
-        targetSdkVersion flutter.targetSdkVersion
-        versionCode flutterVersionCode.toInteger()  
-        versionName flutterVersionName
-        multiDexEnabled true
-    }
-    signingConfigs {
-        release {
-            keyAlias keystoreProperties['keyAlias']
-            keyPassword keystoreProperties['keyPassword']
-            storeFile = file('release-key.jks')
-            storePassword keystoreProperties['storePassword']        
+    // Automatically injects a namespace into plugins that are missing one for AGP 8.0+ compatibility
+    afterEvaluate { project ->
+        if (project.hasProperty('android')) {
+            project.android {
+                if (namespace == null) {
+                    namespace project.group
+                }
+            }
         }
-    }
-
-    buildTypes {
-        release {
-            signingConfig signingConfigs.release
-
-            minifyEnabled true
-            shrinkResources true
-        }
-    }
-
-    applicationVariants.all { variant ->
-    variant.outputs.each { output ->
-        // For each separate APK per architecture, set a unique version code as described here:
-        // http://tools.android.com/tech-docs/new-build-system/user-guide/apk-splits
-        def versionCodes = ["armeabi-v7a":1, "arm64-v8a":2, x86_64:3]
-        def abi = output.getFilter(OutputFile.ABI)
-        if (abi != null) {  // null for the universal-debug, universal-release variants
-            output.versionCodeOverride =
-                    variant.versionCode * 10 + versionCodes.get(abi)}
-      }
-    }
-
-    flavorDimensions "app"
-
-    productFlavors {
-      prod {
-        dimension "app"
-        resValue "string", "app_name", "Chrono"
-      }
-
-      dev {
-        dimension "app"
-        resValue "string", "app_name", "Chrono Dev"
-        // versionNameSuffix "-dev",
-        applicationIdSuffix ".dev"
-      }
-    }
-
-    dependenciesInfo {
-        // Disables dependency metadata when building APKs.
-        // This is for the signed .apk that we post to GitHub, so the dependency metadata isn't relevant.
-        includeInApk false
-        // Enable dependency metadata when building Android App Bundles.
-        // This is for the Google Play Store, so we'll want the metadata.
-        includeInBundle true
     }
 }
 
+ext.kotlin_version = "1.9.24"
 
-
-flutter {
-    source '../..'
+tasks.register("clean", Delete) {
+    delete rootProject.buildDir
 }
-
