@@ -15,15 +15,16 @@ allprojects {
         maven { url "${project(':background_fetch').projectDir}/libs" }
     }
 
-    // Add this configuration block to force D8-compatible versions
     configurations.all {
         resolutionStrategy {
-            force 'com.google.errorprone:error_prone_annotations:2.20.0'
-            force 'androidx.lifecycle:lifecycle-livedata-core:2.8.3'
-            force 'androidx.lifecycle:lifecycle-common:2.8.3'
-            force 'androidx.lifecycle:lifecycle-common-java8:2.8.3'
-            force 'androidx.lifecycle:lifecycle-runtime:2.8.3'
-            force 'androidx.lifecycle:lifecycle-viewmodel:2.8.3'
+            // Force older, D8-compatible versions of AndroidX
+            force 'androidx.lifecycle:lifecycle-livedata-core:2.6.2'
+            force 'androidx.lifecycle:lifecycle-common:2.6.2'
+            force 'androidx.lifecycle:lifecycle-common-java8:2.6.2'
+            force 'androidx.lifecycle:lifecycle-runtime:2.6.2'
+            force 'androidx.lifecycle:lifecycle-viewmodel:2.6.2'
+            force 'androidx.core:core:1.10.1'
+            force 'androidx.core:core-ktx:1.10.1'
         }
     }
 }
@@ -36,7 +37,8 @@ subprojects {
     project.evaluationDependsOn(':app')
 }
 
-ext.kotlin_version = "1.8.0"
+// Bumped Kotlin version to handle modern AndroidX metadata
+ext.kotlin_version = "1.9.24"
 
 tasks.register("clean", Delete) {
     delete rootProject.buildDir
