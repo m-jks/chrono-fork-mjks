@@ -4,7 +4,6 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        // Use the stable 8.1.x line to avoid the String.length() NPE
         classpath("com.android.tools:r8:8.1.56")
     }
 }
@@ -18,7 +17,10 @@ allprojects {
 
     configurations.all {
         resolutionStrategy {
-            // Force older, D8-compatible versions of AndroidX
+            // Fixes the tsbackgroundfetch D8 crash
+            force 'com.google.errorprone:error_prone_annotations:2.20.0'
+            
+            // Fixes the lifecycle-livedata D8 crash
             force 'androidx.lifecycle:lifecycle-livedata-core:2.6.2'
             force 'androidx.lifecycle:lifecycle-common:2.6.2'
             force 'androidx.lifecycle:lifecycle-common-java8:2.6.2'
@@ -38,7 +40,6 @@ subprojects {
     project.evaluationDependsOn(':app')
 }
 
-// Bumped Kotlin version to handle modern AndroidX metadata
 ext.kotlin_version = "1.9.24"
 
 tasks.register("clean", Delete) {
