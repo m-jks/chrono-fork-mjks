@@ -1,48 +1,82 @@
-allprojects {
-    repositories {
-        google()
-        mavenCentral()
-        maven { url "${project(':background_fetch').projectDir}/libs" }
+plugins {
+    id "com.android.application"
+    id "kotlin-android"
+    // The Flutter Gradle Plugin must be applied
+    id "dev.flutter.flutter-gradle-plugin"
+}
+
+def localProperties = new Properties()
+def localPropertiesFile = rootProject.file('local.properties')
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.withReader('UTF-8') { reader ->
+        localProperties.load(reader)
+    }
+}
+
+def flutterVersionCode = localProperties.getProperty('flutter.versionCode')
+if (flutterVersionCode == null) {
+    flutterVersionCode = '1'
+}
+
+def flutterVersionName = localProperties.getProperty('flutter.versionName')
+if (flutterVersionName == null) {
+    flutterVersionName = '1.0'
+}
+
+android {
+    // REQUIRED FOR AGP 8.0+: Replace this with your actual package name from AndroidManifest.xml
+    namespace "com.vicolo.chrono"
+
+    compileSdk flutter.compileSdkVersion
+    ndkVersion flutter.ndkVersion
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 
-    configurations.all {
-        resolutionStrategy {
-            // Fixes the tsbackgroundfetch D8 crash
-            force 'com.google.errorprone:error_prone_annotations:2.20.0'
-            
-            // Fixes the lifecycle-livedata D8 crash
-            force 'androidx.lifecycle:lifecycle-livedata-core:2.6.2'
-            force 'androidx.lifecycle:lifecycle-common:2.6.2'
-            force 'androidx.lifecycle:lifecycle-common-java8:2.6.2'
-            force 'androidx.lifecycle:lifecycle-runtime:2.6.2'
-            force 'androidx.lifecycle:lifecycle-viewmodel:2.6.2'
-            force 'androidx.core:core:1.10.1'
-            force 'androidx.core:core-ktx:1.10.1'
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+    }
+
+    defaultConfig {
+        // Replace this with your actual package name
+        applicationId "com.vicolo.chrono"
+        
+        minSdk flutter.minSdkVersion
+        targetSdk flutter.targetSdkVersion
+        versionCode flutterVersionCode.toInteger()
+        versionName flutterVersionName
+    }
+
+    buildTypes {
+        release {
+            signingConfig signingConfigs.debug
+        }
+    }
+
+    // Required because you are using '--flavor dev' in your build command
+    flavorDimensions "default"
+    productFlavors {
+        dev {
+            dimension "default"
+            // Optional: you can add a suffix to your dev app so it installs alongside prod
+            // applicationIdSuffix ".dev" 
+        }
+        prod {
+            dimension "default"
         }
     }
 }
 
-rootProject.buildDir = '../build'
-subprojects {
-    project.buildDir = "${rootProject.buildDir}/${project.name}"
-}
-subprojects {
-    project.evaluationDependsOn(':app')
-    
-    // Automatically injects a namespace into plugins that are missing one for AGP 8.0+ compatibility
-    afterEvaluate { project ->
-        if (project.hasProperty('android')) {
-            project.android {
-                if (namespace == null) {
-                    namespace project.group
-                }
-            }
-        }
-    }
+flutter {
+    source '../..'
 }
 
-ext.kotlin_version = "1.9.24"
-
-tasks.register("clean", Delete) {
-    delete rootProject.buildDir
+dependencies {
+    // Add any native Android dependencies here if you have them
 }

@@ -1,3 +1,16 @@
+buildscript {
+    ext.kotlin_version = "1.9.24"
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        // Defines the modern, bug-free Gradle and Kotlin plugins
+        classpath 'com.android.tools.build:gradle:8.3.0'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
 allprojects {
     repositories {
         google()
@@ -28,9 +41,18 @@ subprojects {
 }
 subprojects {
     project.evaluationDependsOn(':app')
+    
+    // Automatically injects a namespace into plugins that are missing one for AGP 8.0+ compatibility
+    afterEvaluate { project ->
+        if (project.hasProperty('android')) {
+            project.android {
+                if (namespace == null) {
+                    namespace project.group
+                }
+            }
+        }
+    }
 }
-
-ext.kotlin_version = "1.9.24"
 
 tasks.register("clean", Delete) {
     delete rootProject.buildDir
