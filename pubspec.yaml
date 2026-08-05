@@ -11,8 +11,6 @@ dependencies:
   flutter:
     sdk: flutter
 
-  flutter:
-    sdk: flutter
   mobile_scanner: ^3.5.6 # Check pub.dev for the latest version
   
   flutter_boot_receiver: ^1.1.0
