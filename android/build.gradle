@@ -4,7 +4,8 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath("com.android.tools:r8:8.3.37")
+        // Use the stable 8.1.x line to avoid the String.length() NPE
+        classpath("com.android.tools:r8:8.1.56")
     }
 }
 
