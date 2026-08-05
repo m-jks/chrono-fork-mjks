@@ -190,6 +190,8 @@ Widget? getSettingItemWidget(
         showAsCard: showAsCard,
         onChanged: onChanged,
       );
+    } else if (setting is QrSetting) {
+      return QrSettingCard(setting: setting);
     } else {
       throw Exception('No widget for setting type: ${item.runtimeType}');
     }

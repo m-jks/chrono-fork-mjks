@@ -6,6 +6,9 @@ import 'package:clock_app/alarm/widgets/tasks/sequence_task.dart';
 import 'package:clock_app/settings/types/setting.dart';
 import 'package:clock_app/settings/types/setting_group.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:clock_app/alarm/widgets/tasks/qr_task.dart';
+import 'package:clock_app/settings/types/qr_setting.dart';
+import 'package:clock_app/settings/widgets/qr_setting_card.dart';
 
 Map<AlarmTaskType, AlarmTaskSchema> alarmTaskSchemasMap = {
   AlarmTaskType.math: AlarmTaskSchema(
@@ -115,4 +118,20 @@ Map<AlarmTaskType, AlarmTaskSchema> alarmTaskSchemasMap = {
       return MemoryTask(onSolve: onSolve, settings: settings);
     },
   ),
+  AlarmTaskType.qrCode: AlarmTaskSchema(
+  (context) => "QR Code Scanner",
+  SettingGroup("QR Code Settings", (context) => "QR Code Scanner", [
+    
+    // Use your custom QrSetting here
+    QrSetting(
+      "Registered QR Code",
+      (context) => "Target QR String",
+      "",
+    ),
+    
+  ]),
+  (onSolve, settings) {
+    return QrTask(onSolve: onSolve, settings: settings);
+  },
+),
 };
