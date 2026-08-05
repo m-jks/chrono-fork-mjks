@@ -25,7 +25,7 @@ class _QrSettingCardState extends State<QrSettingCard> {
     // If the user successfully scanned a code, update the setting's value
     if (scannedCode != null && scannedCode.isNotEmpty) {
       setState(() {
-        widget.setting.value = scannedCode;
+        widget.setting.setValue(context, scannedCode);
       });
     }
   }

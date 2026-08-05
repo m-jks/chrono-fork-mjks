@@ -23,6 +23,8 @@ import 'package:clock_app/settings/widgets/string_setting_card.dart';
 import 'package:clock_app/settings/widgets/switch_setting_card.dart';
 import 'package:clock_app/settings/widgets/toggle_setting_card.dart';
 import 'package:flutter/material.dart';
+import 'package:clock_app/settings/types/qr_setting.dart';
+import 'package:clock_app/settings/widgets/qr_setting_card.dart';
 
 List<Widget> getSettingWidgets(
   List<SettingItem> settingItems, {
