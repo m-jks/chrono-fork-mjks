@@ -23,13 +23,13 @@ allprojects {
 }
 
 rootProject.buildDir = '../build'
+
 subprojects {
     project.buildDir = "${rootProject.buildDir}/${project.name}"
 }
+
 subprojects {
-    project.evaluationDependsOn(':app')
-    
-    // Automatically injects a namespace into plugins that are missing one for AGP 8.0+ compatibility
+    // 1. Register the afterEvaluate hook FIRST for all modules
     afterEvaluate { project ->
         if (project.hasProperty('android')) {
             project.android {
@@ -39,6 +39,9 @@ subprojects {
             }
         }
     }
+    
+    // 2. Trigger the evaluation dependency AFTER the hook is safely registered
+    project.evaluationDependsOn(':app')
 }
 
 tasks.register("clean", Delete) {
