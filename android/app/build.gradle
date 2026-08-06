@@ -1,8 +1,7 @@
 plugins {
-    id "com.android.application"
-    id "kotlin-android"
-    // The Flutter Gradle Plugin must be applied
-    id "dev.flutter.flutter-gradle-plugin"
+    id 'com.android.application'
+    id 'kotlin-android'
+    id 'dev.flutter.flutter-gradle-plugin'
 }
 
 def localProperties = new Properties()
@@ -24,7 +23,6 @@ if (flutterVersionName == null) {
 }
 
 android {
-    // REQUIRED FOR AGP 8.0+: Replace this with your actual package name from AndroidManifest.xml
     namespace "com.vicolo.chrono"
 
     compileSdk flutter.compileSdkVersion
@@ -44,7 +42,6 @@ android {
     }
 
     defaultConfig {
-        // Replace this with your actual package name
         applicationId "com.vicolo.chrono"
         
         minSdk flutter.minSdkVersion
@@ -59,13 +56,10 @@ android {
         }
     }
 
-    // Required because you are using '--flavor dev' in your build command
     flavorDimensions "default"
     productFlavors {
         dev {
             dimension "default"
-            // Optional: you can add a suffix to your dev app so it installs alongside prod
-            // applicationIdSuffix ".dev" 
         }
         prod {
             dimension "default"
