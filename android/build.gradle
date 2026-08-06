@@ -28,8 +28,8 @@ subprojects {
     project.buildDir = "${rootProject.buildDir}/${project.name}"
 }
 
+// 1. Attach the afterEvaluate hooks in their OWN loop, before any project evaluates :app
 subprojects {
-    // 1. Register the afterEvaluate hook FIRST for all modules
     afterEvaluate { project ->
         if (project.hasProperty('android')) {
             project.android {
@@ -39,8 +39,10 @@ subprojects {
             }
         }
     }
-    
-    // 2. Trigger the evaluation dependency AFTER the hook is safely registered
+}
+
+// 2. Trigger the evaluation dependency in a SEPARATE loop
+subprojects {
     project.evaluationDependsOn(':app')
 }
 
